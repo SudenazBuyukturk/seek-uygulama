@@ -1,0 +1,41 @@
+import matplotlib.pyplot as plt
+from collections import Counter
+
+class SeekUygulamasi:
+    def __init__(self):
+        self.veritabani = {}
+
+    def canli_gozlemle(self, kullanici, canli_tur, konum, tarih):
+        if konum not in self.veritabani:
+            self.veritabani[konum] = {}
+        if tarih not in self.veritabani[konum]:
+            self.veritabani[konum][tarih] = {}
+        self.veritabani[konum][tarih][kullanici] = canli_tur
+
+    def kullanici_sayisi_sorgula(self, konum, tarih, canli_tur):
+        if konum in self.veritabani and tarih in self.veritabani[konum]:
+            kullanici_sayisi = len([kullanici for kullanici, canli in self.veritabani[konum][tarih].items() if canli == canli_tur])
+            return kullanici_sayisi
+        else:
+            return 0
+
+    def grafik_olustur(self, konum, tarih, canli_tur):
+        kullanici_sayisi = self.kullanici_sayisi_sorgula(konum, tarih, canli_tur)
+        print(f"{tarih} tarihinde {konum} konumunda {canli_tur} gören kullanıcı sayısı: {kullanici_sayisi}")
+
+    def konum_grafik_olustur(self, konum, canli_tur):
+        tarihler = []
+        kullanici_sayilari = []
+
+        for tarih, kullanici_gozlemleri in self.veritabani[konum].items():
+            canli_tur_sayisi = sum(1 for canli in kullanici_gozlemleri.values() if canli == canli_tur)
+            tarihler.append(tarih)
+            kullanici_sayilari.append(canli_tur_sayisi)
+
+        plt.plot(tarihler, kullanici_sayilari)
+        plt.title(f"{konum} Konumunda {canli_tur} Gözlemleri")
+        plt.xlabel("Tarih")
+        plt.ylabel("Kullanıcı Sayısı")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
